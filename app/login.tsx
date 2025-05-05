@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/store/authSlice";
+import { saveUserToStorage, logoutUser } from "@/store/authSlice";
 import styled from "styled-components/native";
 
 export default function LoginScreen() {
@@ -11,6 +11,26 @@ export default function LoginScreen() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Debug current user data on mount
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      try {
+        const currentUserData = await AsyncStorage.getItem("user");
+        if (currentUserData) {
+          const userData = JSON.parse(currentUserData);
+          console.log("Current user in AsyncStorage:", userData);
+          console.log("User role:", userData.role);
+        } else {
+          console.log("No user found in AsyncStorage");
+        }
+      } catch (error) {
+        console.error("Error checking current user:", error);
+      }
+    };
+    
+    checkCurrentUser();
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -25,9 +45,16 @@ export default function LoginScreen() {
         return;
       }
 
-      // Save user session
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-      dispatch(setUser(user));
+      // Ensure user has a role, default to 'user' if not present
+      const userWithRole = {
+        ...user,
+        role: user.role || 'user'
+      };
+      
+      console.log("Logging in user with role:", userWithRole.role);
+
+      // Use the new async action creator instead of separate calls
+      dispatch(saveUserToStorage(userWithRole));
 
       Alert.alert("Success", "Login successful!");
       router.push("/(tabs)");
@@ -50,45 +77,49 @@ export default function LoginScreen() {
   );
 }
 
-// Styled Components
+// Styled components
 const Container = styled.View`
   flex: 1;
-  align-items: center;
-  justify-content: center;
   padding: 20px;
-  background-color: #ffffff;
+  justify-content: center;
+  background-color: white;
 `;
 
 const Logo = styled.Image`
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
+  width: 100%;
+  height: 120px;
+  resize-mode: contain;
+  align-self: center;
+  margin-bottom: 40px;
 `;
 
 const Input = styled.TextInput`
-  width: 90%;
-  padding: 12px;
-  margin-bottom: 10px;
+  height: 50px;
+  border-width: 1px;
+  border-color: #ddd;
   border-radius: 10px;
-  background-color: #f2f2f2;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
 `;
 
 const LoginButton = styled.TouchableOpacity`
   background-color: #4ecb71;
   padding: 15px;
-  width: 90%;
-  align-items: center;
   border-radius: 10px;
-  margin-top: 10px;
+  margin-bottom: 15px;
 `;
 
 const LoginText = styled.Text`
   color: white;
+  text-align: center;
+  font-size: 16px;
   font-weight: bold;
 `;
 
 const SignupText = styled.Text`
+  color: #4ecb71;
+  text-align: center;
+  font-size: 16px;
   margin-top: 10px;
-  color: #4a90e2;
-  text-decoration: underline;
 `;

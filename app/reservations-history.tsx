@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, Image } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -58,14 +58,35 @@ export default function ReservationHistoryScreen() {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <ReservationCard>
-                <ReservationDetails>
-                  <Ionicons name="time-outline" size={20} color="gray" />
-                  <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 5 }}>
-                    {item.date}
-                  </Text>
-                  <Ionicons name="people-outline" size={20} color="gray" style={{ marginLeft: 10 }} />
-                  <Text> {item.guests} Guests</Text>
-                </ReservationDetails>
+                {item.restaurant && (
+                  <RestaurantSection>
+                    <RestaurantImage 
+                      source={{ uri: item.restaurant.image }} 
+                      resizeMode="cover"
+                    />
+                    <RestaurantName>{item.restaurant.name}</RestaurantName>
+                  </RestaurantSection>
+                )}
+                <ReservationInfo>
+                  <ReservationDetails>
+                    <Ionicons name="time-outline" size={20} color="gray" />
+                    <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 5 }}>
+                      {item.date}
+                    </Text>
+                  </ReservationDetails>
+                  
+                  <ReservationDetails style={{ marginTop: 5 }}>
+                    <Ionicons name="people-outline" size={20} color="gray" />
+                    <Text style={{ marginLeft: 5 }}>{item.guests} Guests</Text>
+                  </ReservationDetails>
+                  
+                  {item.restaurant && (
+                    <ReservationDetails style={{ marginTop: 5 }}>
+                      <Ionicons name="location-outline" size={20} color="gray" />
+                      <Text style={{ marginLeft: 5 }}>{item.restaurant.address}</Text>
+                    </ReservationDetails>
+                  )}
+                </ReservationInfo>
                 <CancelButton onPress={() => handleCancelReservation(item.id)}>
                   <Ionicons name="trash" size={20} color="white" />
                 </CancelButton>
@@ -115,11 +136,34 @@ const ReservationCard = styled.View`
   background-color: #f9f9f9;
   border-radius: 10px;
   padding: 15px;
-  margin-bottom: 10px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 15px;
   elevation: 2;
+`;
+
+const RestaurantSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom-width: 1px;
+  border-bottom-color: #eeeeee;
+`;
+
+const RestaurantImage = styled.Image`
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+`;
+
+const RestaurantName = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-left: 10px;
+`;
+
+const ReservationInfo = styled.View`
+  flex: 1;
 `;
 
 const ReservationDetails = styled.View`
@@ -131,6 +175,9 @@ const CancelButton = styled.TouchableOpacity`
   background-color: red;
   padding: 10px;
   border-radius: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 `;
 
 const EmptyText = styled.Text`

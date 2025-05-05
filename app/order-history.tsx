@@ -48,7 +48,7 @@ export default function OrderHistoryScreen() {
             <OrderCard>
               <OrderHeader>
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>Order on {item.date}</Text>
-                <Text>Total: ${item.total.toFixed(2)}</Text>
+                <Text>Total: {item.total} ₸</Text>
               </OrderHeader>
               {item.items.map((food, index) => (
                 <FoodItem key={index}>
@@ -56,7 +56,7 @@ export default function OrderHistoryScreen() {
                   <FoodDetails>
                     <Text>{food.name}</Text>
                     <Text>Qty: {food.quantity}</Text>
-                    <Text>${(food.price * food.quantity).toFixed(2)}</Text>
+                    <Text>{food.price * food.quantity} ₸</Text>
                   </FoodDetails>
                 </FoodItem>
               ))}

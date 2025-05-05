@@ -20,7 +20,7 @@ export default function CheckoutScreen() {
   }, [reduxCartItems]);
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const handleConfirmOrder = async () => {
@@ -54,7 +54,7 @@ export default function CheckoutScreen() {
               <ItemImage source={{ uri: item.image }} />
               <ItemDetails>
                 <ItemName>{item.name}</ItemName>
-                <ItemPrice>${(item.price * item.quantity).toFixed(2)}</ItemPrice>
+                <ItemPrice>{item.price * item.quantity} ₸</ItemPrice>
                 <QuantityText>Quantity: {item.quantity}</QuantityText>
               </ItemDetails>
             </CartItem>
@@ -73,7 +73,7 @@ export default function CheckoutScreen() {
         </PaymentButton>
       </PaymentContainer>
 
-      <TotalPrice>Total: ${getTotalPrice()}</TotalPrice>
+      <TotalPrice>Total: {getTotalPrice()} ₸</TotalPrice>
       <ConfirmOrderButton onPress={handleConfirmOrder}>
         <ButtonText>Confirm Order</ButtonText>
       </ConfirmOrderButton>

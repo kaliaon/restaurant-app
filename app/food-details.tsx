@@ -56,7 +56,7 @@ export default function FoodDetailsScreen() {
       <FoodImage source={{ uri: food.image }} />
       <FoodInfo>
         <FoodTitle>{food.name}</FoodTitle>
-        <PriceText>${food.price.toFixed(2)}</PriceText>
+        <PriceText>{food.price} ₸</PriceText>
         <AvailabilityText availability={food.availability}>
           {food.availability}
         </AvailabilityText>
@@ -91,6 +91,7 @@ const FoodImage = styled.Image`
   width: 100%;
   height: 250px;
   border-radius: 10px;
+  resize-mode: cover;
 `;
 
 const FoodInfo = styled.View`

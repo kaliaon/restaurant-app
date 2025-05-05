@@ -12,7 +12,7 @@ export default function CartScreen() {
   const router = useRouter();
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const handleCheckout = () => {
@@ -42,7 +42,7 @@ export default function CartScreen() {
               <ItemImage source={{ uri: item.image }} />
               <ItemDetails>
                 <ItemName>{item.name}</ItemName>
-                <ItemPrice>${(item.price * item.quantity).toFixed(2)}</ItemPrice>
+                <ItemPrice>{item.price * item.quantity} ₸</ItemPrice>
                 <QuantityContainer>
                   <QuantityButton onPress={() => dispatch(decreaseQuantity(item.id))}>
                     <ButtonText>-</ButtonText>
@@ -61,7 +61,7 @@ export default function CartScreen() {
         />
       )}
 
-      <TotalPrice>Total: ${getTotalPrice()}</TotalPrice>
+      <TotalPrice>Total: {getTotalPrice()} ₸</TotalPrice>
       <CheckoutButton onPress={handleCheckout}>
         <ButtonText>Proceed to Checkout</ButtonText>
       </CheckoutButton>
